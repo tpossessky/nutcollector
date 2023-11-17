@@ -1,20 +1,44 @@
 #include "display.h"
 #include "functions.h"
+#include <windows.h> // Sleep function on Windows
 
 
 void displayHeader()
 {
-    printf("________________________________________________________________________________________________\n");
-    printf(" _______          __    _________        .__  .__                 __                            \n");
-    printf(" \\      \\  __ ___/  |_  \\_   ___ \\  ____ |  | |  |   ____   _____/  |_  ___________         \n");
-    printf(" /   |   \\|  |  \\   __\\ /    \\  \\/ /  _ \\|  | |  | _/ __ \\_/ ___\\   __\\/  _ \\_  __ \\ \n");
-    printf("/    |    \\  |  /|  |   \\     \\___(  <_> )  |_|  |_\\  ___/\\  \\___|  | (  <_> )  | \\/     \n");
-    printf("\\____|__  /____/ |__|    \\______  /\\____/|____/____/\\___  >\\___  >__|  \\____/|__|         \n");
-    printf("        \\/                      \\/                      \\/     \\/                           \n");
-    printf("________________________________________________________________________________________________\n");
-    printf("\nYou are a squirrel! Congrats! You need to store as many nuts as you can before winter comes in 20 days through buying and selling.\n\t-Be careful of the other animals though, they're hungry too!");
-    printf("\n________________________________________________________________________________________________\n");
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
+    WORD saved_attributes;
 
+    GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
+
+    saved_attributes = consoleInfo.wAttributes;
+
+    //make title green 
+    SetConsoleTextAttribute(hConsole,
+        FOREGROUND_GREEN);
+
+    int delayMicroseconds = 1;
+    char text[] =
+    "_________________________________________________________________________________________\n"
+    "   _______          __    _________        .__  .__                 __                            \n"
+    "   \\      \\  __ ___/  |_  \\_   ___ \\  ____ |  | |  |   ____   _____/  |_  ___________         \n"
+    "   /   |   \\|  |  \\   __\\ /    \\  \\/ /  _ \\|  | |  | _/ __ \\_/ ___\\   __\\/  _ \\_  __ \\ \n"
+    "  /    |    \\  |  /|  |   \\     \\___(  <_> )  |_|  |_\\  ___/\\  \\___|  | (  <_> )  | \\/     \n"
+    "  \\____|__  /____/ |__|    \\______  /\\____/|____/____/\\___  >\\___  >__|  \\____/|__|         \n"
+    "          \\/                      \\/                      \\/     \\/                           \n"
+    "_________________________________________________________________________________________";
+
+
+    for (int i = 0; text[i] != '\0'; i++) {
+        putchar(text[i]);
+        fflush(stdout); // Flush the output buffer to ensure characters are printed immediately
+        Sleep(delayMicroseconds);
+    }
+    
+    printf("\n\nYou are a squirrel! Congrats! You need to get as many nuts as you can before winter\ncomes in 20 days through buying and selling.\n\t-Watch out for other animals though, they're hungry too!");
+    printf("\n_________________________________________________________________________________________\n");
+    //go back to white text
+    SetConsoleTextAttribute(hConsole, saved_attributes);
 }
 
 
@@ -30,6 +54,16 @@ void displayMainChoices(){
 
 
 void displayGoodbye(){
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
+    WORD saved_attributes;
+
+    GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
+
+    saved_attributes = consoleInfo.wAttributes;
+
+    //make title green 
+    SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);
     printf("\n\n");
     printf("                     ,;:;;,\n");
     printf("                   ;;;;;\n"   );
@@ -40,27 +74,48 @@ void displayGoodbye(){
     printf("           `\"_(  _/=\"`\n"   );
     printf("            `\"'``\n"         );
     printf("         Bye!           \n\n"   );
+    SetConsoleTextAttribute(hConsole, saved_attributes);
 }
 
 
 void displayEvent(int eventCode){
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
+    WORD saved_attributes;
+    GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
+    saved_attributes = consoleInfo.wAttributes;
+
+    SetConsoleTextAttribute(hConsole,
+    FOREGROUND_RED);
+    SetConsoleTextAttribute(hConsole, saved_attributes);
+
     switch (eventCode){
         case 1:
             break;
         case 2:
+            SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
             printf("\n\n~~Oh No! Another squirrel took some of your nuts~~\n");
+            SetConsoleTextAttribute(hConsole, saved_attributes);
             break;
         case 3:
-            printf("\n\n~~Oh No! A hungry bear ate all your nuts\n~~");
+            SetConsoleTextAttribute(hConsole,FOREGROUND_RED);
+            printf("\n\n~~Oh No! A hungry bear ate all your nuts~~\n");
+            SetConsoleTextAttribute(hConsole, saved_attributes);
             break;
         case 4:
+            SetConsoleTextAttribute(hConsole,FOREGROUND_BLUE);
             printf("\n\n~~Look at that! You found some free nuts on the ground!~~\n");
+            SetConsoleTextAttribute(hConsole, saved_attributes);
             break;
         case 5:
+            SetConsoleTextAttribute(hConsole,FOREGROUND_BLUE);
             printf("\n\n~~Look at that! You found some money while climbing a tree!~~\n");
+            SetConsoleTextAttribute(hConsole, saved_attributes);
             break;
         case 6:
+            SetConsoleTextAttribute(hConsole,FOREGROUND_RED);
             printf("\n\n~~Oh No! You were eaten by a hawk!!!~~\n");
+            SetConsoleTextAttribute(hConsole, saved_attributes);
             break;
         default:
             break;
@@ -137,9 +192,22 @@ void displayGameInfo(struct Game *game){
 
 
 void displayGameOver(int win){
-    if(win == 1)
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
+    WORD saved_attributes;
+    GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
+    saved_attributes = consoleInfo.wAttributes;
+
+    if(win == 1){
+        SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);
         printf("\nSQUIRREL HEAVEN!\n");
-    else 
+        SetConsoleTextAttribute(hConsole, saved_attributes);
+    }
+    else {
+        SetConsoleTextAttribute(hConsole,FOREGROUND_RED);
         printf("\nWell, not everyone can make it through the winter...\n");
+        SetConsoleTextAttribute(hConsole, saved_attributes);
+
+    }
     
 }

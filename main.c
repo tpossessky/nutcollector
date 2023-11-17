@@ -110,6 +110,7 @@ void sellNuts(){
 void createEvent(){
     int randomNum;
     randomNum = rand() % 5 + 1;
+    int eventAmt;
 
     switch (randomNum){
         case 1:
@@ -118,7 +119,12 @@ void createEvent(){
             break;
         case 2:
             displayEvent(randomNum);
-            game->nuts -= (rand() % 5 + 1);
+            eventAmt = (rand() % 5 + 1);
+
+            if(eventAmt > game->nuts)
+                game->nuts = 0;
+            else
+                game->nuts -= eventAmt;       
             break;
         case 3:
             displayEvent(randomNum);
@@ -140,7 +146,6 @@ void createEvent(){
                 displayEvent(randomNum);
                 game->dead = 1;
             }
-
             break;
         default:
             break;
@@ -154,23 +159,26 @@ int endGame(){
         return 1;
     if(game->dead == 1)
         return 1;
-    if(game->day == 20)
-        return 2;
+    if(game->day == 20){
+        if(game->nuts > 0)
+            return 2;
+        else 
+            return 1;
+    }
     return 0; 
 }
 
 
-void run()
-{
+void run(){
     int userChoice; 
     int randomEventCheck;  
     int endGameCheck; 
 
     while(1)
-    {   displayDay(game->day);
+    {   
+        displayDay(game->day);
         displayMainChoices();
         scanf("%d", &userChoice);
-
         
         switch (userChoice)
         {
@@ -186,12 +194,15 @@ void run()
                 if(endGameCheck == 1){
                     displayGameInfo(game);
                     displayGameOver(0);
+                    displayGoodbye();
+                    return;
                 }else if(endGameCheck == 2){
                     displayGameInfo(game);
                     displayGameOver(1);
+                    displayGoodbye();
+                    return;
                 }
                 break;
-
             case 1:
                 buyNuts();
                 break;
@@ -210,12 +221,10 @@ void run()
                 break;
         }
     }
-
 }
 
 
-int main()
-{
+int main(){
     srand(time(NULL));
 
     game->cash = 10;
